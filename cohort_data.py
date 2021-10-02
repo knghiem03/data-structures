@@ -1,5 +1,7 @@
 """Functions to parse a file containing student data."""
 
+from os import X_OK
+
 
 def all_houses(filename):
     """Return a set of all house names in the given file.
@@ -16,8 +18,6 @@ def all_houses(filename):
     """
 
     houses = set()
-
-    # TODO: replace this with your code
     lines = open(filename)
     for line in lines:
       line = line.rstrip()
@@ -77,12 +77,7 @@ def students_by_cohort(filename, cohort="All"):
         continue
       # Now doing the work:
       if cohort == cohort_name:
-        #print(line)
-        #print(f"Input {cohort} --- {cohort_name}")
-        #print(f"{f_name} {l_name}")
         students.append(f_name + " " + l_name)
-        #print("hello ???")
-        #print(students)
       elif cohort == "All":
         # Add all student names to the list 
         students.append(f_name + " " + l_name)
@@ -130,8 +125,6 @@ def all_names_by_house(filename):
     slytherin = []
     ghosts = []
     instructors = []
-
-    # TODO: replace this with your code
 
     lines = open(filename)
     for line in lines:
@@ -228,8 +221,18 @@ def find_duped_last_names(filename):
     Return:
       - set[str]: a set of strings
     """
-
-    # TODO: replace this with your code
+    dup_last_name_set = set()
+    lines = open(filename)
+    temp = []
+    for line in lines:
+      line = line.rstrip()
+      f_name, l_name, h_name, adviser, cohort_name = line.split("|")
+      if l_name not in temp:
+        temp.append(l_name)
+      else:
+        dup_last_name_set.add(l_name)
+    lines.close()
+    return dup_last_name_set
 
 
 def get_housemates_for(filename, name):
@@ -243,9 +246,30 @@ def get_housemates_for(filename, name):
     >>> get_housemates_for('cohort_data.txt', 'Hermione Granger')
     {'Angelina Johnson', ..., 'Seamus Finnigan'}
     """
+    housemates = set()
 
-    # TODO: replace this with your code
+    lines = open(filename)
+    for line in lines:
+      line = line.rstrip()
+      f_name, l_name, h_name, adviser, cohort_name = line.split("|")
+      full_name = f_name + " " + l_name
+      if full_name == name:
+        house = h_name
+        cohort = cohort_name
+        break
+    lines.close()
 
+    lines = open(filename)
+    for line in lines:
+      line = line.rstrip()
+      f_name, l_name, h_name, adviser, cohort_name = line.split("|")
+      full_name = f_name + " " + l_name
+      if h_name == house and cohort_name == cohort:
+        # Have to exclude the person from the list. Only want his/her classmate
+        if name != full_name:
+          housemates.add(f_name + " " + l_name)
+    lines.close()
+    return housemates
 
 ##############################################################################
 # END OF MAIN EXERCISE.  Yay!  You did it! You Rock!
